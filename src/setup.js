@@ -181,11 +181,8 @@ async function findUnity(unityHubPath, unityVersion) {
     log(`Looking for Unity version: ${unityVersion} at path: ${unityHubPath}`);
     let unityPath = '';
     let output = await executeHub(unityHubPath, `editors --installed`);
-    output = output.split("(Intel)");
-    output = output.join("");
-    output = output.split("(Apple silicon)");
-    output = output.join("");
-    const match = output.match(new RegExp(`${unityVersion} , installed at (.+)`));
+    output = output.replaceAll('(Intel)', '').replaceAll('(Apple silicon)', '');
+    const match = output.match(new RegExp(`^${unityVersion}\\s*,?\\s*installed at\\s+(.+)$`, 'm'));
     if (match) {
         unityPath = match[1];
         if (unityPath && process.platform === 'darwin') {
